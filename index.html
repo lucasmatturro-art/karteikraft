@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<title>KarteiKraft</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiS2FydGVpS3JhZnQiLCJzaG9ydF9uYW1lIjoiS2FydGVpS3JhZnQiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBmMTcyYSIsInRoZW1lX2NvbG9yIjoiIzBmMTcyYSJ9">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body,#root{width:100%;height:100%;background:#0f172a}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+
+/* ═══ SHARED DATA ═══ */
+const RAW_A2="der Abend|A|a noite/a tarde\ndie Adresse|V|o endereço\ndie Ahnung|V|a ideia/noção\ndas Alter|G|a idade\ndie Ampel|V|o semáforo\nder Anfang|A|o começo\ndas Angebot|G|a oferta\ndie Angst|V|o medo\ndie Ankunft|V|a chegada\ndie Anmeldung|V|o registro\nder Anruf|A|a ligação\nder Anschluss|A|a conexão\ndie Antwort|V|a resposta\ndie Anzeige|V|o anúncio\nder Anzug|A|o terno\nder Apfel|A|a maçã\ndie Apotheke|V|a farmácia\nder Apparat|A|o aparelho\ndie Arbeit|V|o trabalho\nder Arm|A|o braço\nder Artikel|A|o artigo\nder Arzt|A|o médico\ndas Auge|G|o olho\nder Aufzug|A|o elevador\ndie Ausbildung|V|a formação\nder Ausflug|A|a excursão\nder Ausgang|A|a saída\ndie Auskunft|V|a informação\ndas Ausland|G|o exterior\nder Ausweis|A|o documento\ndas Auto|G|o carro\ndie Autobahn|V|a rodovia\nder Automat|A|a máquina automática\ndas Baby|G|o bebê\ndie Bäckerei|V|a padaria\ndas Bad|G|o banheiro\ndie Bahn|V|o trem\nder Bahnhof|A|a estação\nder Bahnsteig|A|a plataforma\nder Balkon|A|a varanda\ndie Banane|V|a banana\ndie Bank|V|o banco\nder Basketball|A|o basquete\nder Bauch|A|o estômago\nder Baum|A|a árvore\ndie Baustelle|V|a obra\ndas Bein|G|a perna\nder Bekannte|A|o conhecido\nder Berg|A|a montanha\nder Beruf|A|a profissão\nder Bescheid|A|a informação\nder Besuch|A|a visita\ndas Bett|G|a cama\ndie Bewerbung|V|a candidatura\ndie Bibliothek|V|a biblioteca\ndas Bier|G|a cerveja\ndas Bild|G|a foto\ndie Birne|V|a pera\ndie Bitte|V|o pedido\ndas Blatt|G|a folha\nder Bleistift|A|o lápis\nder Blog|A|o blog\ndie Blume|V|a flor\ndie Bluse|V|a blusa\ndie Bohne|V|o feijão\nder Brief|A|a carta\ndie Briefmarke|V|o selo\ndie Brille|V|os óculos\ndas Brot|G|o pão\ndas Brötchen|G|o pãozinho\ndie Brücke|V|a ponte\ndas Buch|G|o livro\nder Buchstabe|A|a letra\ndas Büro|G|o escritório\nder Bus|A|o ônibus\ndie Butter|V|a manteiga\ndas Café|G|o café\nder Chef|A|o chefe\nder Club|A|o clube\nder Computer|A|o computador\ndie Creme|V|o creme\ndie Dame|V|a senhora\nder Dank|A|o agradecimento\ndie Datei|V|o arquivo\ndas Datum|G|a data\ndie Disco|V|a discoteca\ndas Ding|G|a coisa\ndas Doppelzimmer|G|o quarto duplo\ndas Dorf|G|a aldeia\nder Drucker|A|a impressora\nder Durst|A|a sede\ndie Dusche|V|o chuveiro\ndie Ecke|V|a esquina\ndie Ehefrau|V|a esposa\nder Ehemann|A|o marido\ndas Ei|G|o ovo\nder Eingang|A|a entrada\ndie Einladung|V|o convite\nder Eintritt|A|a entrada/ingresso\ndas Eis|G|o sorvete/gelo\nder Empfänger|A|o destinatário\ndas Ende|G|o fim\ndie Entschuldigung|V|a desculpa\ndas Erdgeschoss|G|o térreo\ndie Erfahrung|V|a experiência\ndie Ermäßigung|V|o desconto\nder Erwachsene|A|o adulto\ndas Essen|G|a comida\ndas Fach|G|a disciplina\ndie Fahrkarte|V|a passagem\nder Fahrplan|A|o horário\ndas Fahrrad|G|a bicicleta\ndie Familie|V|a família\nder Familienname|A|o sobrenome\nder Fan|A|o fã\ndie Farbe|V|a cor\nder Fehler|A|o erro\ndie Feier|V|a festa\ndas Fenster|G|a janela\ndie Ferien|V|as férias\nder Fernseher|A|a televisão\ndas Fest|G|a festa\ndas Fieber|G|a febre\nder Film|A|o filme\nder Finger|A|o dedo\ndie Firma|V|a empresa\nder Fisch|A|o peixe\ndie Flasche|V|a garrafa\ndas Fleisch|G|a carne\nder Flohmarkt|A|o mercado de pulgas\nder Flug|A|o voo\nder Flughafen|A|o aeroporto\ndas Flugzeug|G|o avião\nder Fluss|A|o rio\ndas Formular|G|o formulário\nder Fotoapparat|A|a câmera\ndas Foto|G|a fotografia\ndie Frage|V|a pergunta\ndie Frau|V|a mulher\ndie Freizeit|V|o tempo livre\nder Freund|A|o amigo\nder Führerschein|A|a habilitação\nder Fuß|A|o pé\nder Fußball|A|o futebol\ndie Gabel|V|o garfo\ndie Garage|V|a garagem\nder Garten|A|o jardim\nder Gast|A|o convidado\nder Geburtstag|A|o aniversário\ndas Gehalt|G|o salário\ndas Geld|G|o dinheiro\ndie Geldbörse|V|a carteira\ndas Gemüse|G|o legume\ndas Gepäck|G|a bagagem\ndas Gerät|G|o aparelho\ndas Gericht|G|o prato\ndas Geschäft|G|a loja\ndas Geschenk|G|o presente\ndie Geschichte|V|a história\ndas Geschirr|G|a louça\ndas Gesicht|G|o rosto\ndas Gespräch|G|a conversa\ndie Gesundheit|V|a saúde\ndas Getränk|G|a bebida\ndas Gewitter|G|a tempestade\ndie Gitarre|V|o violão\ndas Glas|G|o copo\ndas Gleis|G|a plataforma\ndas Glück|G|a sorte\nder Glückwunsch|A|os parabéns\ndie Grippe|V|a gripe\ndie Größe|V|o tamanho\nder Grund|A|a razão\ndie Gruppe|V|o grupo\nder Gruß|A|a saudação\ndas Haar|G|o cabelo\ndas Hähnchen|G|o frango\ndie Halle|V|o salão\ndie Haltestelle|V|a parada\nder Hals|A|o pescoço\nder Hamburger|A|o hambúrguer\ndie Hand|V|a mão\ndas Handtuch|G|a toalha\ndas Handy|G|o celular\ndie Hauptstadt|V|a capital\ndas Haus|G|a casa\nder Haushalt|A|o lar\ndas Heft|G|o caderno\ndie Heimat|V|a pátria\ndie Heizung|V|o aquecimento\ndas Hemd|G|a camisa\nder Herr|A|o senhor\ndas Herz|G|o coração\ndie Hilfe|V|a ajuda\nder Himmel|A|o céu\ndas Hobby|G|o hobby\ndie Hochzeit|V|o casamento\ndas Hotel|G|o hotel\nder Hund|A|o cachorro\nder Hunger|A|a fome\nder Hut|A|o chapéu\ndie Idee|V|a ideia\ndie Information|V|a informação\ndie Insel|V|a ilha\ndas Instrument|G|o instrumento\ndas Interesse|G|o interesse\ndas Internet|G|a internet\ndas Interview|G|a entrevista\ndie Jacke|V|o casaco\ndie Jeans|V|o jeans\nder Job|A|o emprego\ndie Jugendherberge|V|o albergue\nder Junge|A|o garoto\nder Kaffee|A|o café\nder Kalender|A|o calendário\ndie Kamera|V|a câmera\ndie Karte|V|o cartão/mapa\ndie Kartoffel|V|a batata\nder Käse|A|o queijo\ndie Kasse|V|o caixa\ndie Katze|V|o gato\nder Keller|A|o porão\ndie Kette|V|o colar\ndas Kind|G|a criança\nder Kindergarten|A|o jardim de infância\ndas Kino|G|o cinema\nder Kiosk|A|a banca\ndie Kirche|V|a igreja\ndas Klavier|G|o piano\ndas Kleid|G|o vestido\ndie Kleidung|V|a roupa\nder Koffer|A|a mala\nder Kollege|A|o colega\ndas Konzert|G|o concerto\nder Kopf|A|a cabeça\nder Körper|A|o corpo\ndie Kosmetik|V|a cosmética\ndas Krankenhaus|G|o hospital\ndie Krankenkasse|V|o plano de saúde\ndie Krankheit|V|a doença\nder Kredit|A|o crédito\ndie Kreuzung|V|o cruzamento\nder Krimi|A|o policial (filme)\ndie Küche|V|a cozinha\nder Kuchen|A|o bolo\nder Kühlschrank|A|a geladeira\ndie Kultur|V|a cultura\nder Kunde|A|o cliente\ndie Kunst|V|a arte\nder Kurs|A|o curso\nder Laden|A|a loja\ndie Lampe|V|a lâmpada\ndas Land|G|o país\ndie Landschaft|V|a paisagem\ndas Leben|G|a vida\ndie Lebensmittel|V|os alimentos\ndas Licht|G|a luz\ndas Lied|G|a canção\nder Link|A|o link\ndas Lokal|G|o restaurante\nder Löffel|A|a colher\ndie Lüge|V|a mentira\ndie Lust|V|a vontade\ndas Mädchen|G|a garota\nder Magen|A|o estômago\ndie Mailbox|V|a caixa postal\nder Mann|A|o homem\nder Mantel|A|o casaco\nder Markt|A|o mercado\ndie Maschine|V|a máquina\ndas Medikament|G|o medicamento\ndas Meer|G|o mar\ndie Meinung|V|a opinião\ndie Menge|V|a quantidade\nder Mensch|A|o ser humano\ndie Messe|V|a feira\ndas Messer|G|a faca\ndie Miete|V|o aluguel\ndie Milch|V|o leite\ndas Mineralwasser|G|a água mineral\ndas Mittagessen|G|o almoço\ndie Mitte|V|o centro\ndas Mittel|G|o remédio\ndie Möbel|V|os móveis\ndie Mode|V|a moda\ndas Mobiltelefon|G|o celular\nder Moment|A|o momento\nder Motor|A|o motor\nder Motorroller|A|a scooter\nder Müll|A|o lixo\nder Mund|A|a boca\ndas Museum|G|o museu\ndie Musik|V|a música\ndie Mütze|V|o gorro\nder Nachbar|A|o vizinho\ndie Nachricht|V|a mensagem\ndie Nähe|V|a proximidade\nder Name|A|o nome\ndie Natur|V|a natureza\ndie Note|V|a nota\ndie Notiz|V|a anotação\ndie Nudel|V|o macarrão\ndie Nummer|V|o número\ndas Obst|G|a fruta\ndas Ohr|G|o ouvido\ndas Öl|G|o óleo\ndie Orange|V|a laranja\ndie Ordnung|V|a ordem\nder Ort|A|o lugar\ndas Paar|G|o par\ndas Paket|G|o pacote\ndas Papier|G|o papel\nder Park|A|o parque\nder Partner|A|o parceiro\ndie Party|V|a festa\nder Pass|A|o passaporte\ndas Passwort|G|a senha\ndie Pause|V|a pausa\ndie Person|V|a pessoa\ndas Pferd|G|o cavalo\ndie Pflanze|V|a planta\ndie Pizza|V|a pizza\ndas Plakat|G|o cartaz\nder Plan|A|o plano\nder Platz|A|o lugar\ndie Polizei|V|a polícia\ndie Pommes|V|as batatas fritas\ndie Portion|V|a porção\ndie Post|V|o correio\ndas Poster|G|o pôster\ndie Postkarte|V|o cartão-postal\ndie Postleitzahl|V|o CEP\ndas Praktikum|G|o estágio\ndie Praxis|V|o consultório\nder Preis|A|o preço\ndas Problem|G|o problema\ndas Produkt|G|o produto\ndas Programm|G|o programa\nder Prospekt|A|o folheto\nder Pullover|A|o suéter\ndie Qualität|V|a qualidade\ndas Quiz|G|o quiz\ndas Radio|G|o rádio\ndas Rathaus|G|a prefeitura\nder Raum|A|o espaço/sala\ndie Rechnung|V|a conta\nder Regen|A|a chuva\nder Reifen|A|o pneu\ndie Reihe|V|a fila\ndie Reinigung|V|a lavanderia\nder Reis|A|o arroz\ndie Reise|V|a viagem\ndas Reisebüro|G|a agência de viagens\nder Reiseführer|A|o guia de viagem\ndie Reparatur|V|o reparo\ndas Restaurant|G|o restaurante\ndas Rezept|G|a receita\ndie Rezeption|V|a recepção\nder Ring|A|o anel\nder Rock|A|a saia\ndie Rose|V|a rosa\nder Rucksack|A|a mochila\nder Rücken|A|as costas\ndie Ruhe|V|o silêncio\nder Rundgang|A|o passeio\ndie Sache|V|a coisa\nder Saft|A|o suco\nder Salat|A|a salada\ndas Salz|G|o sal\nder Satz|A|a frase\nder Schalter|A|o balcão\ndie Schere|V|a tesoura\ndas Schiff|G|o navio\ndas Schild|G|a placa\nder Schirm|A|o guarda-chuva\ndas Schlafzimmer|G|o quarto\ndas Schloss|G|o castelo\nder Schlüssel|A|a chave\nder Schmerz|A|a dor\nder Schnee|A|a neve\ndie Schokolade|V|o chocolate\nder Schrank|A|o armário\nder Schuh|A|o sapato\ndie Schule|V|a escola\nder Schüler|A|o aluno\ndie Schwester|V|a irmã\ndas Schwimmbad|G|a piscina\nder See|A|o lago\ndie Seife|V|o sabão\ndie Seite|V|a página\ndie Sendung|V|o programa\nder Service|A|o serviço\ndie Situation|V|a situação\nder Ski|A|o esqui\ndas Sofa|G|o sofá\nder Sohn|A|o filho\ndie Sonne|V|o sol\nder Spaß|A|a diversão\ndie Speisekarte|V|o cardápio\ndas Spiel|G|o jogo\nder Sport|A|o esporte\nder Sportplatz|A|o campo de esportes\ndie Sprache|V|o idioma\ndie Sprechstunde|V|a consulta\ndie Stadt|V|a cidade\nder Stadtplan|A|o mapa da cidade\nder Star|A|a estrela\ndie Stelle|V|o emprego\nder Stiefel|A|a bota\nder Stift|A|a caneta\ndas Stipendium|G|a bolsa de estudos\nder Stock|A|o andar\nder Strand|A|a praia\ndie Straße|V|a rua\ndie Straßenbahn|V|o bonde\ndas Stück|G|a peça\nder Student|A|o estudante\ndas Studium|G|os estudos\nder Stuhl|A|a cadeira\ndie Suppe|V|a sopa\ndie Süßigkeiten|V|os doces\ndas Tablet|G|o tablet\ndie Tablette|V|o comprimido\ndie Tafel|V|o quadro\ndie Tasche|V|a bolsa\ndas Taschengeld|G|a mesada\ndie Tasse|V|a xícara\ndas Taxi|G|o táxi\ndas Team|G|a equipe\nder Tee|A|o chá\ndas Telefon|G|o telefone\nder Teller|A|o prato\ndas Tennis|G|o tênis\nder Termin|A|a consulta\ndas Theater|G|o teatro\ndas Thema|G|o tema\ndas Ticket|G|o ingresso\ndas Tier|G|o animal\nder Tipp|A|a dica\nder Tisch|A|a mesa\nder Titel|A|o título\ndie Toilette|V|o banheiro\ndie Tomate|V|o tomate\nder Topf|A|a panela\ndie Torte|V|o bolo\ndie Tour|V|o passeio\nder Tourist|A|o turista\nder Traum|A|o sonho\ndie Treppe|V|a escada\ndas T-Shirt|G|a camiseta\ndie Tür|V|a porta\ndie Übernachtung|V|a hospedagem\ndie Übersetzung|V|a tradução\ndie Uhr|V|o relógio\nder Umzug|A|a mudança\nder Unfall|A|o acidente\ndie Universität|V|a universidade\nder Unterricht|A|a aula\ndie Unterschrift|V|a assinatura\nder Urlaub|A|as férias\ndie Veranstaltung|V|o evento\nder Verein|A|a associação\nder Verkehr|A|o trânsito\nder Vermieter|A|o proprietário\ndie Verspätung|V|o atraso\nder Vertrag|A|o contrato\nder Verwandte|A|o parente\nder Vogel|A|o pássaro\nder Volleyball|A|o vôlei\nder Vorname|A|o primeiro nome\nder Vorschlag|A|a sugestão\nder Wagen|A|o carro\nder Wald|A|a floresta\ndie Wand|V|a parede\ndie Wäsche|V|a roupa suja\ndas Wasser|G|a água\ndie Webseite|V|o site\nder Weg|A|o caminho\nder Wein|A|o vinho\ndie Welt|V|o mundo\ndie Werkstatt|V|a oficina\nder Wettbewerb|A|a competição\ndas Wetter|G|o clima\nder Wind|A|o vento\nder Witz|A|a piada\ndie Wohnung|V|o apartamento\ndas Wohnzimmer|G|a sala de estar\ndie Wolke|V|a nuvem\nder Workshop|A|o workshop\ndas Wort|G|a palavra\nder Wunsch|A|o desejo\ndie Wurst|V|a salsicha\nder Zahn|A|o dente\ndie Zeit|V|o tempo\ndie Zeitschrift|V|a revista\ndie Zeitung|V|o jornal\ndas Zelt|G|a barraca\ndas Zentrum|G|o centro\nder Zettel|A|o bilhete\ndas Zeugnis|G|o diploma\ndas Ziel|G|o objetivo\ndie Zigarette|V|o cigarro\ndas Zimmer|G|o quarto\nder Zirkus|A|o circo\ndie Zitrone|V|o limão\nder Zoo|A|o zoológico\nder Zucker|A|o açúcar\nder Zug|A|o trem\nändern|C|mudar/alterar\nabgeben|C|entregar\nabholen|C|buscar\nabschließen|C|trancar/concluir\nanfangen|C|começar\nanmachen|C|ligar (luz)\nanmelden|C|registrar-se\nanrufen|C|ligar (telefone)\nansehen|C|olhar/assistir\nantworten|C|responder\narbeiten|C|trabalhar\närgern|C|irritar-se\naufhören|C|parar\naufmachen|C|abrir\naufpassen|C|prestar atenção\naufräumen|C|arrumar\naufstehen|C|levantar-se\nausfüllen|C|preencher\nausgeben|C|gastar\nausgehen|C|sair\nausmachen|C|desligar\naussehen|C|parecer\naussprechen|C|pronunciar\naussteigen|C|descer (ônibus)\nbacken|C|assar\nbaden|C|tomar banho\nbasteln|C|fazer artesanato\nbauen|C|construir\nbeantworten|C|responder\nbedeuten|C|significar\nbeeilen|C|apressar-se\nbegründen|C|justificar\nbekommen|C|receber\nbenutzen|C|usar\nbeschreiben|C|descrever\nbesichtigen|C|visitar (lugar)\nbestehen|C|passar (prova)\nbestellen|C|pedir/encomendar\nbestätigen|C|confirmar\nbesuchen|C|visitar\nbezahlen|C|pagar\nbitten|C|pedir\nbraten|C|fritar\nbrauchen|C|precisar\nbringen|C|trazer\nbuchen|C|reservar\nbuchstabieren|C|soletrar\nchatten|C|conversar online\ndanken|C|agradecer\ndauern|C|durar\ndenken|C|pensar\ndiskutieren|C|discutir\ndrucken|C|imprimir\ndrücken|C|apertar\ndürfen|C|poder (permissão)\nduschen|C|tomar banho\neinkaufen|C|fazer compras\neinladen|C|convidar\neinsteigen|C|embarcar\neintragen|C|preencher\neinziehen|C|mudar-se (para)\nempfehlen|C|recomendar\nerinnern|C|lembrar\nerklären|C|explicar\nerlauben|C|permitir\nerreichen|C|alcançar\nerzählen|C|contar\nessen|C|comer\nfahren|C|dirigir/ir\nfallen|C|cair\nfeiern|C|comemorar\nfinden|C|encontrar/achar\nfliegen|C|voar\nfotografieren|C|fotografar\nfragen|C|perguntar\nfreuen|C|alegrar-se\nfrühstücken|C|tomar café da manhã\nfühlen|C|sentir\ngeben|C|dar\ngefallen|C|gostar\ngehen|C|ir/andar\ngehören|C|pertencer\ngewinnen|C|ganhar\nglauben|C|acreditar\ngratulieren|C|parabenizar\ngrillen|C|grelhar\nhaben|C|ter\nhalten|C|parar/segurar\nhängen|C|pendurar\nheiraten|C|casar\nheißen|C|chamar-se\nhelfen|C|ajudar\nherunterladen|C|baixar (download)\nhoffen|C|esperar\nholen|C|buscar\nhören|C|ouvir\nhusten|C|tossir\ninformieren|C|informar\ninteressieren|C|interessar\njoggen|C|correr\nkaufen|C|comprar\nkennen|C|conhecer\nkennenlernen|C|conhecer (alguém)\nklappen|C|funcionar/dar certo\nkochen|C|cozinhar\nkommen|C|vir\nkontrollieren|C|controlar\nkosten|C|custar\nkriegen|C|conseguir\nkönnen|C|poder/saber\nkündigen|C|demitir-se\nlachen|C|rir\nlassen|C|deixar\nlaufen|C|correr/andar\nleben|C|viver\nlegen|C|colocar\nleihen|C|emprestar\nlernen|C|aprender\nlesen|C|ler\nlieben|C|amar\nliefern|C|entregar\nliegen|C|estar deitado\nlügen|C|mentir\nmachen|C|fazer\nmalen|C|pintar\nmeinen|C|achar/opinar\nmerken|C|perceber\nmieten|C|alugar\nmöchten|C|querer/gostar\nmögen|C|gostar\nmüssen|C|dever/ter que\nnehmen|C|pegar\nnennen|C|nomear\nnotieren|C|anotar\norganisieren|C|organizar\npacken|C|fazer as malas\nparken|C|estacionar\npassen|C|servir/caber\npassieren|C|acontecer\nplanen|C|planejar\nprobieren|C|experimentar\nprüfen|C|verificar\nputzen|C|limpar\nraten|C|aconselhar\nregnen|C|chover\nreisen|C|viajar\nreiten|C|cavalgar\nrenovieren|C|renovar\nreparieren|C|consertar\nreservieren|C|reservar\nriechen|C|cheirar\nrufen|C|chamar\nsagen|C|dizer\nsammeln|C|colecionar\nschaffen|C|conseguir\nscheinen|C|brilhar/parecer\nschenken|C|presentear\nschicken|C|enviar\nschimpfen|C|reclamar\nschlafen|C|dormir\nschließen|C|fechar\nschmecken|C|ter gosto\nschneiden|C|cortar\nschneien|C|nevar\nschreiben|C|escrever\nschwimmen|C|nadar\nsehen|C|ver\nsingen|C|cantar\nsitzen|C|sentar\nsollen|C|dever\nsparen|C|economizar\nspeichern|C|salvar (arquivo)\nspielen|C|jogar/tocar\nsprechen|C|falar\nstehen|C|estar em pé\nstellen|C|colocar\nsterben|C|morrer\nstören|C|incomodar\nstudieren|C|estudar\nsuchen|C|procurar\nsurfen|C|navegar (internet)\ntanzen|C|dançar\ntauschen|C|trocar\nteilen|C|dividir\ntelefonieren|C|telefonar\ntragen|C|carregar/vestir\ntrinken|C|beber\nüben|C|praticar\nübersetzen|C|traduzir\nüberweisen|C|transferir\nübernachten|C|pernoitar\numsteigen|C|fazer baldeação\numziehen|C|mudar-se\nunternehmen|C|empreender\nunterschreiben|C|assinar\nuntersuchen|C|examinar\nvergleichen|C|comparar\nverkaufen|C|vender\nverdienen|C|ganhar (dinheiro)\nvergessen|C|esquecer\nverlieren|C|perder\nvermieten|C|alugar (para)\nverpassen|C|perder (ônibus)\nverreisen|C|viajar\nverschieben|C|adiar\nverstehen|C|entender\nversuchen|C|tentar\nvorbereiten|C|preparar\nwandern|C|caminhar\nwarten|C|esperar\nwechseln|C|trocar\nwecken|C|acordar\nweinen|C|chorar\nwerden|C|tornar-se\nwiederholen|C|repetir\nwohnen|C|morar\nwollen|C|querer\nwählen|C|escolher\nzahlen|C|pagar\nzeichnen|C|desenhar\nzeigen|C|mostrar\nzuhören|C|escutar\nzumachen|C|fechar";
+const RAW_B1="der Abfall|A|o lixo\ndie Absicht|V|a intenção\nder Abschnitt|A|a seção\ndie Abteilung|V|o departamento\nder Akku|A|a bateria\ndie Allergie|V|a alergia\ndas Alter|G|a velhice\ndie Ampel|V|o semáforo\nder Antrag|A|o requerimento\ndie Anweisung|V|a instrução\nder Anwalt|A|o advogado\ndie Armee|V|o exército\ndie Atmosphäre|V|a atmosfera\nder Aufenthalt|A|a estadia\nder Auftrag|A|a encomenda\nder Aufwand|A|o esforço\ndie Ausnahme|V|a exceção\ndie Aussicht|V|a perspectiva\nder Bedarf|A|a necessidade\ndie Bedienung|V|o atendimento\ndie Bedingung|V|a condição\ndie Bedrohung|V|a ameaça\ndie Behandlung|V|o tratamento\nder Beitrag|A|a contribuição\ndie Belohnung|V|a recompensa\ndie Bemerkung|V|a observação\ndie Beratung|V|a consultoria\nder Bereich|A|a área\nder Bericht|A|o relatório\ndie Beschwerde|V|a reclamação\ndie Bestellung|V|o pedido\nder Betrag|A|o valor\nder Betrieb|A|a empresa\ndie Bevölkerung|V|a população\ndie Bewegung|V|o movimento\nder Beweis|A|a prova\nder Bewerber|A|o candidato\ndie Beziehung|V|o relacionamento\nder Bildschirm|A|a tela\ndie Bitte|V|o pedido\nder Boden|A|o solo\ndie Branche|V|o setor\nder Brand|A|o incêndio\ndie Bremse|V|o freio\nder Brunnen|A|a fonte\ndie Bühne|V|o palco\nder Bürgermeister|A|o prefeito\ndie Chance|V|a chance\ndie Datei|V|o arquivo\ndie Debatte|V|o debate\ndie Decke|V|o teto/cobertor\nder Dieb|A|o ladrão\ndie Diät|V|a dieta\nder Dienst|A|o serviço\nder Druck|A|a pressão\ndie Droge|V|a droga\ndie Dummheit|V|a burrice\ndie Eigenschaft|V|a característica\nder Eindruck|A|a impressão\ndie Einheit|V|a unidade\ndas Einkommen|G|a renda\ndie Einrichtung|V|a instalação\nder Einsatz|A|o uso/empenho\ndie Einstellung|V|a atitude\nder Empfang|A|a recepção\ndie Energie|V|a energia\ndie Entwicklung|V|o desenvolvimento\ndas Ereignis|G|o acontecimento\ndas Ergebnis|G|o resultado\ndie Erholung|V|o descanso\ndie Erinnerung|V|a lembrança\ndie Ernte|V|a colheita\ndie Eröffnung|V|a inauguração\ndie Fabrik|V|a fábrica\nder Faktor|A|o fator\ndie Fantasie|V|a fantasia\ndie Fassade|V|a fachada\ndie Feuerwehr|V|os bombeiros\ndie Figur|V|a figura\ndie Fläche|V|a superfície\ndie Flucht|V|a fuga\nder Flüchtling|A|o refugiado\ndie Folge|V|a consequência\ndie Forderung|V|a exigência\ndie Forschung|V|a pesquisa\nder Fortschritt|A|o progresso\ndie Freiheit|V|a liberdade\ndie Freundschaft|V|a amizade\nder Frieden|A|a paz\ndie Frist|V|o prazo\ndie Garantie|V|a garantia\ndie Geduld|V|a paciência\ndie Gefahr|V|o perigo\ndas Gefängnis|G|a prisão\ndie Gegend|V|a região\nder Gegner|A|o adversário\ndas Gehirn|G|o cérebro\ndas Gelände|G|o terreno\ndie Gelegenheit|V|a oportunidade\ndie Gemeinde|V|o município\ndie Generation|V|a geração\ndie Genehmigung|V|a autorização\ndas Genie|G|o gênio\ndie Gesellschaft|V|a sociedade\ndie Gewalt|V|a violência\ndas Gewissen|G|a consciência\ndie Gewerkschaft|V|o sindicato\ndie Grenze|V|a fronteira\nder Grundsatz|A|o princípio\nder Hafen|A|o porto\nder Handel|A|o comércio\ndie Handlung|V|a ação\nder Haushalt|A|o orçamento\ndie Herausforderung|V|o desafio\ndie Herkunft|V|a origem\nder Hinweis|A|a dica/indicação\ndie Hochschule|V|a universidade\nder Horizont|A|o horizonte\nder Humor|A|o humor\ndie Industrie|V|a indústria\nder Inhalt|A|o conteúdo\ndie Initiative|V|a iniciativa\ndas Jahrzehnt|G|a década\ndie Jugend|V|a juventude\ndie Karriere|V|a carreira\ndie Katastrophe|V|a catástrofe\ndie Kenntnisse|V|os conhecimentos\nder Klimawandel|A|a mudança climática\nder Knopf|A|o botão\nder Kompromiss|A|o compromisso\nder Konflikt|A|o conflito\ndie Konkurrenz|V|a concorrência\ndie Konsequenz|V|a consequência\nder Kreis|A|o círculo\ndie Krise|V|a crise\ndie Kritik|V|a crítica\ndas Lager|G|o armazém\ndie Lage|V|a situação\ndie Landwirtschaft|V|a agricultura\ndie Leidenschaft|V|a paixão\ndie Leistung|V|o desempenho\ndie Leitung|V|a direção\ndie Lieferung|V|a entrega\nder Lohn|A|o salário\ndie Lösung|V|a solução\ndie Macht|V|o poder\nder Mangel|A|a falta\ndie Mannschaft|V|a equipe\ndie Maßnahme|V|a medida\ndas Material|G|o material\ndie Mehrheit|V|a maioria\ndie Methode|V|o método\ndie Miete|V|o aluguel\ndie Minderheit|V|a minoria\ndas Missverständnis|G|o mal-entendido\ndas Mitglied|G|o membro\ndas Mitleid|G|a compaixão\ndie Mühe|V|o esforço\nder Mut|A|a coragem\nder Nachteil|A|a desvantagem\ndie Neugier|V|a curiosidade\ndie Niederlage|V|a derrota\nder Notfall|A|a emergência\nder Nutzen|A|a utilidade\ndie Oberfläche|V|a superfície\ndie Öffentlichkeit|V|o público\ndas Opfer|G|a vítima\ndie Opposition|V|a oposição\ndas Parlament|G|o parlamento\ndie Pflicht|V|o dever\ndie Philosophie|V|a filosofia\ndie Politik|V|a política\ndie Polizei|V|a polícia\ndie Presse|V|a imprensa\nder Profit|A|o lucro\nder Protest|A|o protesto\nder Prozess|A|o processo\ndie Quelle|V|a fonte\nder Rat|A|o conselho\ndie Reaktion|V|a reação\ndas Recht|G|o direito\ndie Rede|V|o discurso\ndie Reform|V|a reforma\ndie Regel|V|a regra\ndie Regierung|V|o governo\ndie Rente|V|a aposentadoria\ndie Rettung|V|o resgate\ndie Revolution|V|a revolução\ndie Richtung|V|a direção\nder Rohstoff|A|a matéria-prima\ndie Rolle|V|o papel (função)\nder Schaden|A|o dano\nder Schutz|A|a proteção\ndie Schuld|V|a culpa\nder Sieg|A|a vitória\nder Sinn|A|o sentido\ndie Sorge|V|a preocupação\ndie Spannung|V|a tensão\nder Staat|A|o estado\ndie Steuer|V|o imposto\ndie Stimmung|V|o humor/ambiente\ndie Störung|V|a perturbação\ndie Strafe|V|a punição\ndie Strategie|V|a estratégia\nder Strom|A|a eletricidade\ndie Struktur|V|a estrutura\ndie Stufe|V|o nível\ndie Sucht|V|o vício\ndie Tat|V|o ato\ndie Technik|V|a técnica\ndie Tendenz|V|a tendência\nder Terror|A|o terror\ndie Tradition|V|a tradição\nder Trend|A|a tendência\ndie Trennung|V|a separação\nder Trick|A|o truque\nder Typ|A|o tipo\nder Überblick|A|a visão geral\ndie Überlegung|V|a reflexão\ndie Überschrift|V|o título\ndie Überzeugung|V|a convicção\nder Umfang|A|a extensão\ndie Umfrage|V|a pesquisa\ndie Umgebung|V|os arredores\nder Umgang|A|o trato\ndie Umwelt|V|o meio ambiente\nder Unterschied|A|a diferença\ndie Unterstützung|V|o apoio\ndie Untersuchung|V|o exame\ndie Ursache|V|a causa\ndie Verantwortung|V|a responsabilidade\ndie Verbindung|V|a conexão\ndas Verbrechen|G|o crime\nder Verdacht|A|a suspeita\ndie Vereinbarung|V|o acordo\ndas Verfahren|G|o procedimento\ndie Vergangenheit|V|o passado\nder Verlag|A|a editora\ndie Verletzung|V|a lesão\nder Verlust|A|a perda\ndie Vernunft|V|a razão\ndie Versicherung|V|o seguro\ndie Version|V|a versão\nder Vertrag|A|o contrato\ndas Vertrauen|G|a confiança\nder Vorgang|A|o processo\ndie Voraussetzung|V|o pré-requisito\nder Vorteil|A|a vantagem\ndie Vorstellung|V|a apresentação\nder Vorwurf|A|a acusação\ndas Wachstum|G|o crescimento\ndie Waffe|V|a arma\ndie Wahl|V|a eleição\ndie Wahrheit|V|a verdade\ndie Ware|V|a mercadoria\ndie Warnung|V|o aviso\nder Wechsel|A|a troca\nder Wert|A|o valor\nder Wettbewerb|A|a competição\ndie Wirkung|V|o efeito\ndie Wirtschaft|V|a economia\ndas Wissen|G|o conhecimento\nder Wohlstand|A|a prosperidade\nder Wunsch|A|o desejo\ndie Würde|V|a dignidade\ndie Zukunft|V|o futuro\nder Zusammenhang|A|o contexto\nder Zustand|A|a condição\nder Zweck|A|a finalidade\nder Zweifel|A|a dúvida\nabbiegen|C|virar/dobrar\nablehnen|C|recusar\nabnehmen|C|emagrecer\nabonnieren|C|assinar\nabstimmen|C|votar\nabwaschen|C|lavar louça\nachten|C|prestar atenção\nakzeptieren|C|aceitar\nanerkennen|C|reconhecer\nangeben|C|declarar\nankündigen|C|anunciar\nanschaffen|C|adquirir\nanschließen|C|conectar\nanschnallen|C|afivelar\nansprechen|C|abordar\nanstellen|C|contratar\nanwenden|C|aplicar\natmen|C|respirar\naufgeben|C|desistir\naufhalten|C|deter\naufheben|C|guardar/pegar\naufregen|C|irritar\nauftreten|C|aparecer\naufwachen|C|acordar\nausdrucken|C|imprimir\nausreichen|C|ser suficiente\nausrichten|C|organizar\nausschließen|C|excluir\nausstellen|C|expor\nauswählen|C|selecionar\nausziehen|C|despir/mudar-se\nbearbeiten|C|processar\nbedienen|C|operar/servir\nbeeinflussen|C|influenciar\nbegegnen|C|encontrar\nbegleiten|C|acompanhar\nbehalten|C|manter\nbehandeln|C|tratar\nbeleidigen|C|ofender\nbemerken|C|notar\nbenötigen|C|necessitar\nbeobachten|C|observar\nberaten|C|aconselhar\nberechnen|C|calcular\nberuhigen|C|acalmar\nbeschädigen|C|danificar\nbesitzen|C|possuir\nbesorgen|C|providenciar\nbesprechen|C|discutir\nbestrafen|C|punir\nbieten|C|oferecer\nbrechen|C|quebrar\nbremsen|C|frear\nbrennen|C|queimar\ndarstellen|C|representar\ndienen|C|servir\ndrehen|C|girar\neinfügen|C|inserir\neinführen|C|introduzir\neinnehmen|C|tomar (remédio)\neinsetzen|C|usar/empregar\neinzahlen|C|depositar\nempfangen|C|receber\nentscheiden|C|decidir\nentsorgen|C|descartar\nentstehen|C|surgir\nenttäuschen|C|decepcionar\nentwickeln|C|desenvolver\nerfahren|C|descobrir\nerfinden|C|inventar\nerfüllen|C|cumprir\nerkennen|C|reconhecer\nerleben|C|vivenciar\nersetzen|C|substituir\nerstellen|C|criar\nerwarten|C|esperar\nerziehen|C|educar\nfangen|C|pegar/capturar\nfesthalten|C|segurar\nfeststellen|C|constatar\nfliehen|C|fugir\nfolgen|C|seguir\nfordern|C|exigir\nfressen|C|comer (animal)\nfrieren|C|congelar\nfördern|C|promover\nfüttern|C|alimentar\ngarantieren|C|garantir\ngelten|C|valer\ngenehmigen|C|aprovar\ngenügen|C|bastar\ngewöhnen|C|acostumar\ngreifen|C|agarrar\ngründen|C|fundar\nheben|C|levantar\nheizen|C|aquecer\nherstellen|C|fabricar\nhinterlassen|C|deixar (atrás)\nhinweisen|C|indicar\ninstallieren|C|instalar\nintegrieren|C|integrar\nklagen|C|reclamar\nkleben|C|colar\nklettern|C|escalar\nklicken|C|clicar\nklingen|C|soar\nklären|C|esclarecer\nkritisieren|C|criticar\nkämpfen|C|lutar\nleiden|C|sofrer\nleisten|C|realizar\nleiten|C|dirigir\nloben|C|elogiar\nlöschen|C|apagar\nlösen|C|resolver\nmarkieren|C|marcar\nmelden|C|reportar\nmitteilen|C|comunicar\nnachschlagen|C|consultar\nnutzen|C|utilizar\nordnen|C|ordenar\npflanzen|C|plantar\npflegen|C|cuidar\nprotestieren|C|protestar\nreagieren|C|reagir\nrechnen|C|calcular\nreden|C|falar\nregeln|C|regular\nreinigen|C|limpar\nrennen|C|correr\nschaden|C|prejudicar\nschalten|C|ligar (aparelho)\nschlagen|C|bater\nschweigen|C|calar-se\nschwitzen|C|suar\nschätzen|C|estimar\nsenden|C|enviar\nsichern|C|assegurar\nsorgen|C|cuidar/preocupar\nstammen|C|originar-se\nstattfinden|C|acontecer\nstechen|C|picar\nstecken|C|enfiar\nstehlen|C|roubar\nsteigen|C|subir\nstimmen|C|estar certo\nstoppen|C|parar\nstreiken|C|fazer greve\ntauchen|C|mergulhar\nteilnehmen|C|participar\ntesten|C|testar\ntippen|C|digitar\ntreten|C|pisar\ntrocknen|C|secar\numgehen|C|lidar com\numtauschen|C|trocar (produto)\nunterlassen|C|abster-se\nunterstreichen|C|sublinhar\nunterstützen|C|apoiar\nverbinden|C|conectar\nverbrauchen|C|consumir\nverbringen|C|passar (tempo)\nverlangen|C|exigir\nverlassen|C|abandonar\nverlängern|C|prolongar\nvermeiden|C|evitar\nvermissen|C|sentir falta\nvermuten|C|supor\nverpacken|C|embalar\nverraten|C|trair/revelar\nversichern|C|assegurar\nverteilen|C|distribuir\nvertrauen|C|confiar\nvertreten|C|representar\nverursachen|C|causar\nverwechseln|C|confundir\nveröffentlichen|C|publicar\nvorschlagen|C|propor\nwachsen|C|crescer\nwarnen|C|avisar\nwetten|C|apostar\nwidersprechen|C|contradizer\nwiegen|C|pesar\nzerstören|C|destruir\nzustimmen|C|concordar\nzählen|C|contar (números)\nüberlegen|C|refletir\nübernehmen|C|assumir\nüberprüfen|C|verificar\nüberqueren|C|atravessar\nüberraschen|C|surpreender\nüberreden|C|convencer\nübertreiben|C|exagerar";
+
+const CK={A:"Azul",V:"Vermelho",G:"Verde",C:"Cinza"};
+function parseRaw(raw){const arr=[];const s=new Set();raw.split("\n").forEach(l=>{const[f,c,b]=l.split("|");const k=f+b;if(!s.has(k)){s.add(k);arr.push({front:f,color:CK[c],back:b,g:c});}});return arr;}
+const ALL_A2=parseRaw(RAW_A2);
+const ALL_B1=parseRaw(RAW_B1);
+const LEVELS={A2:{name:"A2 — Elementar",cards:ALL_A2,desc:"~730 palavras"},B1:{name:"B1 — Intermediário",cards:ALL_B1,desc:"~460 palavras"}};
+
+const GC={
+  Azul:{bg:"#2563eb",light:"#eff6ff",accent:"#60a5fa",dark:"#1e40af",label:"der"},
+  Vermelho:{bg:"#dc2626",light:"#fef2f2",accent:"#f87171",dark:"#991b1b",label:"die"},
+  Verde:{bg:"#16a34a",light:"#f0fdf4",accent:"#4ade80",dark:"#166534",label:"das"},
+  Cinza:{bg:"#6b7280",light:"#f3f4f6",accent:"#9ca3af",dark:"#374151",label:"Verb"},
+};
+const G3={A:GC.Azul,V:GC.Vermelho,G:GC.Verde,C:GC.Cinza};
+
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
+function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.85;const v=window.speechSynthesis.getVoices();const d=v.find(x=>x.lang.startsWith("de"));if(d)u.voice=d;window.speechSynthesis.speak(u);}
+function norm(t){return t.toLowerCase().replace(/^(der|die|das)\s+/i,"").replace(/[.,!?;:'"()]/g,"").trim();}
+function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let i=0;i<=m;i++)d[i][0]=i;for(let j=0;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=a[i-1]===b[j-1]?d[i-1][j-1]:1+Math.min(d[i-1][j],d[i][j-1],d[i-1][j-1]);return d[m][n];}
+function msc(s,e){const a=norm(s),b=norm(e);if(a===b)return 1;if(a.includes(b)||b.includes(a))return 0.85;const d=lev(a,b),x=Math.max(a.length,b.length);return x===0?0:1-d/x;}
+function fmtT(s){return Math.floor(s/60)+":"+(s%60<10?"0":"")+(s%60);}
+
+/* ═══ 1. FLASHCARDS ═══ */
+function Flashcards({cards:ALL,onBack}){
+  const[cards,setCards]=useState([]);const[idx,setIdx]=useState(0);const[flip,setFlip]=useState(false);
+  const[known,setKn]=useState(new Set());const[unk,setUn]=useState(new Set());
+  const[sr,setSr]=useState(null);const[st,setSt]=useState("");const[view,setView]=useState("setup");
+  const[filter,setFilter]=useState("all");
+  const spRef=useRef(null);const[listening,setLi]=useState(false);const[spOk,setSpOk]=useState(false);
+
+  useEffect(()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(SR){setSpOk(true);const r=new SR();r.lang="de-DE";r.continuous=false;r.interimResults=false;r.onresult=e=>{const t=e.results[0][0].transcript;setSt(t);setLi(false);if(cards[idx]){const s=msc(t,cards[idx].front);setSr(s>=.85?"correct":s>=.5?"close":"incorrect");}};r.onerror=()=>setLi(false);r.onend=()=>setLi(false);spRef.current=r;}},[]);
+  useEffect(()=>{setSr(null);setSt("");},[idx]);
+
+  const start=(f)=>{let c=[...ALL];if(f!=="all")c=c.filter(x=>x.color===f);setCards(shuf(c));setIdx(0);setFlip(false);setKn(new Set());setUn(new Set());setView("study");};
+  const doFlip=()=>setFlip(!flip);
+  const next=()=>{if(idx<cards.length-1){setIdx(idx+1);setFlip(false);}else setView("done");};
+  const prev=()=>{if(idx>0){setIdx(idx-1);setFlip(false);}};
+  const markK=()=>{const n=new Set(known);n.add(idx);const u=new Set(unk);u.delete(idx);setKn(n);setUn(u);next();};
+  const markU=()=>{const u=new Set(unk);u.add(idx);const n=new Set(known);n.delete(idx);setUn(u);setKn(n);next();};
+  const mic=()=>{if(listening){spRef.current?.stop();setLi(false);}else{setSr(null);setSt("");setLi(true);try{spRef.current?.start();}catch(e){setLi(false);}}};
+
+  useEffect(()=>{const h=e=>{if(view!=="study")return;if(e.key===" "||e.key==="Enter"){e.preventDefault();doFlip();}if(e.key==="ArrowRight")next();if(e.key==="ArrowLeft")prev();if(e.key==="1")markK();if(e.key==="2")markU();};window.addEventListener("keydown",h);return()=>window.removeEventListener("keydown",h);},[view,idx,flip,cards.length,known,unk]);
+
+  const cur=cards[idx];const prog=cards.length>0?(idx+1)/cards.length:0;
+
+  if(view==="setup"){
+    const gc={Azul:0,Vermelho:0,Verde:0};ALL.forEach(c=>{if(gc[c.color]!==undefined)gc[c.color]++;});
+    return(<div className="fc-setup">
+      <button className="back-btn" onClick={onBack}>← Voltar</button>
+      <h2 className="sec-title">📚 Flashcards</h2>
+      <p className="sec-sub">{ALL.length} cartões · Alemão → Português</p>
+      <div className="gbar"><div style={{flex:gc.Azul,background:GC.Azul.bg}}/><div style={{flex:gc.Vermelho,background:GC.Vermelho.bg}}/><div style={{flex:gc.Verde,background:GC.Verde.bg}}/></div>
+      <div className="gleg"><span><b style={{color:GC.Azul.bg}}>●</b> der ({gc.Azul})</span><span><b style={{color:GC.Vermelho.bg}}>●</b> die ({gc.Vermelho})</span><span><b style={{color:GC.Verde.bg}}>●</b> das ({gc.Verde})</span></div>
+      <button className="btn-main" onClick={()=>start("all")}>Estudar Tudo</button>
+      <div className="fbrow">{[["Azul","der"],["Vermelho","die"],["Verde","das"]].map(([c,l])=><button key={c} className="fbtn" style={{color:GC[c].accent}} onClick={()=>start(c)}>Só {l}</button>)}</div>
+    </div>);
+  }
+  if(view==="done"){const kc=known.size,uc=unk.size,pct=cards.length>0?Math.round(kc/cards.length*100):0;
+    return(<div className="fc-done">
+      <h2>Sessão Concluída! 🎉</h2><div className="done-pct">{pct}%</div>
+      <div className="done-row"><div><b style={{color:"#22c55e"}}>{kc}</b><br/><small>Sei</small></div><div><b style={{color:"#ef4444"}}>{uc}</b><br/><small>Não sei</small></div></div>
+      {uc>0&&<button className="btn-main" onClick={()=>{setCards(cards.filter((_,i)=>unk.has(i)));setIdx(0);setFlip(false);setKn(new Set());setUn(new Set());setView("study");}}>Revisar erros ({uc})</button>}
+      <button className="btn-sec" onClick={()=>setView("setup")}>Recomeçar</button>
+      <button className="btn-sec" onClick={onBack}>Início</button>
+    </div>);
+  }
+
+  const gc=cur?GC[cur.color]:GC.Azul;
+  return(<div className="fc-play">
+    <div className="fc-hud">
+      <button className="hud-x" onClick={()=>setView("setup")}>✕</button>
+      <span className="hud-prog">{idx+1}/{cards.length}</span>
+      <span><span style={{color:"#22c55e"}}>✓{known.size}</span> <span style={{color:"#ef4444"}}>✗{unk.size}</span></span>
+    </div>
+    <div className="pbar"><div className="pfill" style={{width:(prog*100)+"%"}}/></div>
+    {st&&sr&&<div className={"spoken "+sr}>Você disse: <b>{st}</b></div>}
+    {cur&&<div className="card-wrap" onClick={doFlip}>
+      <div className={"card-inner"+(flip?" card-flip":"")}>
+        <div className="card-face card-f" style={{borderColor:gc.accent,background:gc.bg,color:"#fff"}}>
+          <span className="card-badge">{gc.label}</span>
+          <span className="card-word">{cur.front}</span>
+          <div className="card-audio" onClick={e=>e.stopPropagation()}>
+            <button className="abtn" onClick={()=>speak(cur.front)}>🔊</button>
+            {spOk&&<button className={"abtn"+(listening?" abtn-on":"")} onClick={mic}>🎤</button>}
+            {sr&&!listening&&<span className={"abadge a-"+sr}>{sr==="correct"?"✓ Correto!":sr==="close"?"≈ Quase!":"✗ Tente de novo"}</span>}
+          </div>
+        </div>
+        <div className="card-face card-b" style={{borderColor:gc.accent,background:gc.light,color:gc.dark}}>
+          <span className="card-btag">TRADUÇÃO</span>
+          <span className="card-word">{cur.back}</span>
+          <span className="card-orig" style={{color:gc.accent}}>{cur.front} <button className="abtn-sm" onClick={e=>{e.stopPropagation();speak(cur.front);}}>🔊</button></span>
+        </div>
+      </div>
+    </div>}
+    <div className="fc-ctrls">
+      <button className="cbtn" onClick={prev} disabled={idx===0}>◀</button>
+      <button className="mbtn mbtn-u" onClick={markU}>✗<span> Não sei</span></button>
+      <button className="cbtn cbtn-f" onClick={doFlip}>↻</button>
+      <button className="mbtn mbtn-k" onClick={markK}>✓<span> Sei</span></button>
+      <button className="cbtn" onClick={next}>{idx===cards.length-1?"Fim":"▶"}</button>
+    </div>
+  </div>);
+}
+
+/* ═══ 2. DUCK HUNT ═══ */
+function DuckSVG({flip=false}){
+  return <svg width="72" height="58" viewBox="0 0 80 64" fill="none" style={{transform:flip?"scaleX(-1)":"",display:"block"}}>
+    <ellipse cx="40" cy="58" rx="28" ry="3.5" fill="#38bdf8" opacity=".25"/>
+    <path d="M16 40c-1-5 2-13 10-16 4-2 14-3 22-1 8 2 16 7 17 15 1 6-2 11-8 14-6 3-15 4-23 3-8-1-17-6-18-15z" fill="#fde047" stroke="#92400e" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M34 36c4-3 10-4 14-2 3 2 4 5 2 8" fill="#facc15" stroke="#a16207" strokeWidth="1.8" strokeLinecap="round"/>
+    <path d="M60 34c3-2 6-5 7-9M58 36c4-1 7-4 9-8" fill="none" stroke="#a16207" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M20 34c-2-4-2-10 0-16" fill="none" stroke="#fde047" strokeWidth="10" strokeLinecap="round"/>
+    <path d="M20 34c-2-4-2-10 0-16" fill="none" stroke="#92400e" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M8 16c-1-6 3-12 10-13 7-1 13 3 14 9 1 6-3 12-10 13-7 1-13-3-14-9z" fill="#fde047" stroke="#92400e" strokeWidth="2"/>
+    <ellipse cx="12" cy="12" rx="4" ry="4.5" fill="white" stroke="#92400e" strokeWidth="1.2"/>
+    <circle cx="11" cy="11.5" r="2.2" fill="#1e293b"/><circle cx="10" cy="10" r="1" fill="white"/>
+    <path d="M10 17.5c1.5 1 4 1 5.5 0" fill="none" stroke="#92400e" strokeWidth="1.2" strokeLinecap="round"/>
+    <path d="M3 14c-2 0-3 2-2 4 1 2 4 3 6 2l-1-7c-1 0-2 0-3 1z" fill="#f97316" stroke="#c2410c" strokeWidth="1.5" strokeLinecap="round"/>
+    <circle cx="18" cy="19" r="3" fill="#fdba74" opacity=".35"/>
+  </svg>;
+}
+
+function DuckHunt({pairs:GAME_PAIRS,onBack}){
+  const[ph,setPh]=useState("menu");const[sc,setSc]=useState(0);const[lv,setLv]=useState(5);
+  const[rn,setRn]=useState(0);const[tot]=useState(12);const[rd,setRd]=useState(null);
+  const[co,setCo]=useState(0);const[mxC,setMxC]=useState(0);const[hits,setHits]=useState(0);
+  const[fb,setFb]=useState(null);const[best,setBest]=useState(0);
+  const[ducks,setDucks]=useState([]);const aRef=useRef(null);const anRef=useRef(null);const rnRef=useRef(0);const fbT=useRef(null);
+
+  const pick=()=>{const s=shuf(GAME_PAIRS);const c=s[0];const w=s.slice(1,4).map(p=>p[1]);return{de:c[0],pt:c[1],opts:shuf([c[1],...w])};};
+  const go=()=>{setSc(0);setLv(5);setRn(0);setCo(0);setMxC(0);setHits(0);setFb(null);rnRef.current=0;setPh("play");nr(0);};
+  const nr=(r)=>{if(r>=tot){setPh("over");return;}const d=pick();setRd(d);setRn(r);rnRef.current=r;
+    const w=aRef.current?aRef.current.clientWidth:400;
+    const lanes=[{dir:1,yPct:.25},{dir:-1,yPct:.70}];
+    setDucks(d.opts.map((o,i)=>{const ln=lanes[i<2?0:1];return{id:Date.now()+i,text:o,ok:o===d.pt,x:ln.dir===1?-(i%2*170)-80:w+(i%2*170)+80,yPct:ln.yPct,dir:ln.dir,sp:0.55+i*0.03,alive:true,shot:false};}));
+  };
+
+  useEffect(()=>{if(ph!=="play")return;let on=true;const tk=()=>{if(!on)return;const w=aRef.current?aRef.current.clientWidth:400;
+    setDucks(p=>p.map(d=>{if(d.shot)return d;let nx=d.x+d.sp*d.dir;if(d.dir===1&&nx>w+100)nx=-110;if(d.dir===-1&&nx<-110)nx=w+100;return{...d,x:nx};}));
+    anRef.current=requestAnimationFrame(tk);};anRef.current=requestAnimationFrame(tk);return()=>{on=false;cancelAnimationFrame(anRef.current);};},[ph,rn]);
+
+  const shoot=(dk,e)=>{e.stopPropagation();if(dk.shot||!dk.alive)return;clearTimeout(fbT.current);
+    if(dk.ok){const nc=co+1;setCo(nc);if(nc>mxC)setMxC(nc);setSc(s=>s+10+(nc-1)*5);setHits(h=>h+1);setFb({t:"+"+String(10+(nc-1)*5)+" Correto!",ok:true});
+      setDucks(p=>p.map(d=>d.id===dk.id?{...d,shot:true,alive:false}:{...d,alive:false}));
+      fbT.current=setTimeout(()=>{setFb(null);nr(rnRef.current+1);},1100);
+    }else{setCo(0);setFb({t:"Errado! → "+(rd?rd.pt:""),ok:false});
+      setDucks(p=>p.map(d=>d.id===dk.id?{...d,shot:true}:d));
+      setLv(l=>{const n=l-1;if(n<=0)setTimeout(()=>setPh("over"),800);return Math.max(0,n);});
+      fbT.current=setTimeout(()=>{setFb(null);nr(rnRef.current+1);},1600);}
+  };
+  useEffect(()=>{if(ph==="over"&&sc>best)setBest(sc);},[ph]);
+
+  if(ph==="menu")return(<div className="dh" style={{cursor:"default"}}>
+    <button className="back-btn" onClick={onBack}>← Voltar</button>
+    <div className="dh-menu"><div className="dh-drow"><DuckSVG/><DuckSVG/><DuckSVG/></div>
+    <h2 className="sec-title">🦆 Entenjagd</h2><p className="sec-sub">Caça aos Patinhos — Acerte a tradução correta!</p>
+    <div className="dh-rules"><p>🎯 Palavra alemã no topo → atire no patinho correto</p><p>❤️ 5 vidas · 🔥 Combo bonus por acertos seguidos</p></div>
+    {best>0&&<p className="dh-best">🏆 Recorde: {best} pts</p>}
+    <button className="btn-main" onClick={go}>🎯 Começar!</button></div></div>);
+
+  if(ph==="over"){const acc=rn>0?Math.round(hits/rn*100):0;
+    return(<div className="dh" style={{cursor:"default"}}><div className="g-over">
+      <h2>{lv<=0?"Game Over! 💀":"Caça Completa! 🎉"}</h2>
+      <div className="done-pct" style={{color:"#d97706"}}>{sc} pts</div>
+      <div className="done-row"><div><b>{rn}</b><small>Rodadas</small></div><div><b>{acc}%</b><small>Precisão</small></div><div><b>{mxC}x</b><small>Combo</small></div></div>
+      <button className="btn-main" onClick={go}>🔄 Jogar</button><button className="btn-sec" onClick={()=>setPh("menu")}>← Menu</button>
+    </div></div>);}
+
+  return(<div className="dh" style={{cursor:"crosshair"}}>
+    <div className="dh-hud"><div className="dh-lives">{[0,1,2,3,4].map(i=><span key={i} className={i<lv?"":"dead"}>❤️</span>)}</div><span className="dh-sc">{sc} pts</span><span className="dh-rn">{rn+1}/{tot}</span></div>
+    {rd&&<div className="dh-bar"><small>Encontre a tradução de:</small><b>{rd.de}</b></div>}
+    {co>1&&<div className="combo">{co}x COMBO 🔥</div>}
+    {fb&&<div className={"gfb "+(fb.ok?"gfb-ok":"gfb-bad")}>{fb.ok?"✓ ":"✗ "}{fb.t}</div>}
+    <div className="dh-arena" ref={aRef}>
+      <div className="wave"/><div className="dh-lane">{ducks.filter(d=>d.yPct<0.5).map(d=><div key={d.id} className={"dk"+(d.shot&&d.ok?" dk-hit":"")+(d.shot&&!d.ok?" dk-miss":"")} style={{left:d.x,top:"50%",transform:"translateY(-50%)",opacity:d.shot?0:1,transition:d.shot?"opacity .4s":"none",pointerEvents:d.alive&&!d.shot?"auto":"none"}} onClick={e=>shoot(d,e)}><DuckSVG flip={d.dir===-1}/><div className="dk-txt">{d.text}</div></div>)}</div>
+      <div className="wave wave-d"/><div className="dh-lane">{ducks.filter(d=>d.yPct>=0.5).map(d=><div key={d.id} className={"dk"+(d.shot&&d.ok?" dk-hit":"")+(d.shot&&!d.ok?" dk-miss":"")} style={{left:d.x,top:"50%",transform:"translateY(-50%)",opacity:d.shot?0:1,transition:d.shot?"opacity .4s":"none",pointerEvents:d.alive&&!d.shot?"auto":"none"}} onClick={e=>shoot(d,e)}><DuckSVG flip={d.dir===-1}/><div className="dk-txt">{d.text}</div></div>)}</div><div className="wave wave-d"/>
+    </div>
+  </div>);
+}
+
+/* ═══ 3. MEMORY GAME ═══ */
+function Memory({pairs:GAME_PAIRS,onBack}){
+  const[ph,setPh]=useState("menu");const[sz,setSz]=useState(6);
+  const[cards,setCards]=useState([]);const[flipped,setFlipped]=useState([]);const[locked,setLocked]=useState(false);
+  const[moves,setMoves]=useState(0);const[matches,setMatches]=useState(0);const[sc,setSc]=useState(0);
+  const[co,setCo]=useState(0);const[mxC,setMxC]=useState(0);const[time,setTime]=useState(0);const tRef=useRef(null);
+
+  const go=(n)=>{setSz(n);const ch=shuf(GAME_PAIRS).slice(0,n);const cs=[];
+    ch.forEach((p,i)=>{cs.push({id:i*2,pid:i,text:p[0],lang:"de",g:p[2],matched:false,flipped:false});cs.push({id:i*2+1,pid:i,text:p[1],lang:"pt",g:p[2],matched:false,flipped:false});});
+    setCards(shuf(cs));setFlipped([]);setLocked(false);setMoves(0);setMatches(0);setSc(0);setCo(0);setMxC(0);setTime(0);setPh("play");};
+
+  useEffect(()=>{if(ph==="play"){tRef.current=setInterval(()=>setTime(t=>t+1),1000);return()=>clearInterval(tRef.current);}return()=>clearInterval(tRef.current);},[ph]);
+  useEffect(()=>{if(ph==="play"&&cards.length>0&&cards.every(c=>c.matched)){clearInterval(tRef.current);setTimeout(()=>setPh("done"),600);}},[cards]);
+
+  const flip=(card)=>{if(locked||card.flipped||card.matched)return;
+    const nf=[...flipped,card.id];setCards(p=>p.map(c=>c.id===card.id?{...c,flipped:true}:c));setFlipped(nf);
+    if(nf.length===2){setMoves(m=>m+1);setLocked(true);const c1=cards.find(c=>c.id===nf[0]),c2=card;
+      if(c1.pid===c2.pid&&c1.id!==c2.id){const nc=co+1;setCo(nc);if(nc>mxC)setMxC(nc);setSc(s=>s+20+(nc-1)*10);setMatches(m=>m+1);
+        setTimeout(()=>{setCards(p=>p.map(c=>c.pid===c1.pid?{...c,matched:true,flipped:true}:c));setFlipped([]);setLocked(false);},500);
+      }else{setCo(0);setTimeout(()=>{setCards(p=>p.map(c=>nf.includes(c.id)?{...c,flipped:false}:c));setFlipped([]);setLocked(false);},900);}}
+  };
+
+  const cols=sz<=6?4:sz<=8?4:5;
+
+  if(ph==="menu")return(<div className="mem-s"><button className="back-btn" onClick={onBack}>← Voltar</button>
+    <h2 className="sec-title">🧠 Jogo da Memória</h2><p className="sec-sub">Encontre os pares Alemão ↔ Português</p>
+    <div className="diff-list">{[[4,"Fácil","🌱"],[6,"Médio","🌿"],[8,"Difícil","🌳"],[10,"Expert","🔥"]].map(([n,l,ic])=>
+      <button key={n} className="diff-btn" onClick={()=>go(n)}><span>{ic}</span><span><b>{l}</b><small>{n*2} cartas</small></span></button>
+    )}</div></div>);
+
+  if(ph==="done"){const tb=Math.max(0,300-time*2);const fs=sc+tb;
+    return(<div className="mem-s"><div className="g-over"><h2>Parabéns! 🎉</h2><div className="done-pct" style={{color:"#fbbf24"}}>{fs} pts</div>
+      <div className="done-row"><div><b>{moves}</b><small>Jogadas</small></div><div><b>{fmtT(time)}</b><small>Tempo</small></div><div><b>{mxC}x</b><small>Combo</small></div></div>
+      {tb>0&&<p style={{color:"#22c55e",fontSize:13}}>⏱️ Bônus tempo: +{tb}</p>}
+      <button className="btn-main" onClick={()=>go(sz)}>🔄 Jogar</button><button className="btn-sec" onClick={()=>setPh("menu")}>← Menu</button>
+    </div></div>);}
+
+  return(<div className="mem-p">
+    <div className="mem-hud"><button className="hud-x" onClick={()=>setPh("menu")}>✕</button><span>🃏 {moves} · ⏱️ {fmtT(time)}</span><span>{sc} pts</span></div>
+    <div className="pbar"><div className="pfill" style={{width:(matches/sz*100)+"%"}}/></div>
+    <div className="mem-grid" style={{gridTemplateColumns:"repeat("+cols+",1fr)"}}>
+      {cards.map(c=>{const gc=G3[c.g]||G3.A;const up=c.flipped||c.matched;const de=c.lang==="de";
+        return(<div key={c.id} className={"mc"+(c.matched?" mc-ok":"")} onClick={()=>flip(c)}>
+          <div className={"mc-in"+(up?" mc-fl":"")}>
+            <div className="mc-f mc-fr" style={{background:de?gc.bg:"#fefdf8",borderColor:gc.accent,color:de?"#fff":gc.dark}}>
+              {de&&<small className="mc-g" style={{background:"rgba(255,255,255,.2)"}}>{gc.label}</small>}
+              <span className="mc-t">{c.text}</span><span className="mc-flag">{de?"🇩🇪":"🇧🇷"}</span>
+            </div>
+            <div className="mc-f mc-bk"><span className="mc-q">?</span></div>
+          </div>
+        </div>);
+      })}
+    </div>
+  </div>);
+}
+
+/* ═══ 4. MATCH/CONNECT ═══ */
+function Match({pairs:GAME_PAIRS,onBack}){
+  const[ph,setPh]=useState("menu");const[sz,setSz]=useState(5);
+  const[left,setLeft]=useState([]);const[right,setRight]=useState([]);
+  const[conns,setConns]=useState([]);const[sel,setSel]=useState(null);
+  const[res,setRes]=useState({});const[checked,setChecked]=useState(false);
+  const[sc,setSc]=useState(0);const[time,setTime]=useState(0);const tRef=useRef(null);
+  const aRef=useRef(null);const lRefs=useRef({});const rRefs=useRef({});
+
+  const go=(n)=>{setSz(n);const ch=shuf(GAME_PAIRS).slice(0,n);
+    setLeft(ch.map((p,i)=>({id:i,text:p[0],g:p[2],pid:i})));
+    setRight(shuf(ch.map((p,i)=>({id:i+100,text:p[1],g:p[2],pid:i}))));
+    setConns([]);setSel(null);setRes({});setChecked(false);setSc(0);setTime(0);setPh("play");};
+
+  useEffect(()=>{if(ph==="play"&&!checked){tRef.current=setInterval(()=>setTime(t=>t+1),1000);return()=>clearInterval(tRef.current);}return()=>clearInterval(tRef.current);},[ph,checked]);
+
+  const ctr=(ref)=>{if(!ref||!aRef.current)return{x:0,y:0};const r=ref.getBoundingClientRect(),a=aRef.current.getBoundingClientRect();return{x:r.left+r.width/2-a.left,y:r.top+r.height/2-a.top};};
+
+  const tap=(side,item)=>{if(checked)return;
+    const ex=conns.find(c=>(side==="left"&&c.lid===item.pid)||(side==="right"&&c.rid===item.pid));
+    if(ex)setConns(p=>p.filter(c=>c!==ex));
+    if(!sel){setSel({side,item});}else{
+      if(sel.side!==side){const li=side==="right"?sel.item:item,ri=side==="right"?item:sel.item;
+        setConns(p=>{const f=p.filter(c=>c.lid!==li.pid&&c.rid!==ri.pid);return[...f,{lid:li.pid,rid:ri.pid,g:li.g}];});}
+      setSel(null);}
+  };
+
+  const check=()=>{clearInterval(tRef.current);const r={};let ok=0;
+    conns.forEach(c=>{if(c.lid===c.rid){r[c.lid]="ok";ok++;}else{r[c.lid]="bad";r["r_"+c.rid]="bad";}});
+    left.forEach(l=>{if(!conns.find(c=>c.lid===l.pid))r[l.pid]="miss";});
+    setRes(r);setSc(ok*20+Math.max(0,200-time*2));setChecked(true);};
+
+  const lines=conns.map(c=>{const l=lRefs.current[c.lid],r=rRefs.current[c.rid];if(!l||!r)return null;
+    const f=ctr(l),t=ctr(r),gc=G3[c.g],rs=res[c.lid];
+    return{f,t,color:rs==="ok"?"#22c55e":rs==="bad"?"#ef4444":gc.bg,dash:rs==="bad"};}).filter(Boolean);
+
+  if(ph==="menu")return(<div className="mt-s"><button className="back-btn" onClick={onBack}>← Voltar</button>
+    <h2 className="sec-title">🔗 Conectar Pares</h2><p className="sec-sub">Ligue alemão ↔ português</p>
+    <div className="diff-list">{[[4,"Fácil","🌱"],[5,"Médio","🌿"],[6,"Difícil","🌳"],[8,"Expert","🔥"]].map(([n,l,ic])=>
+      <button key={n} className="diff-btn" onClick={()=>go(n)}><span>{ic}</span><span><b>{l}</b><small>{n} pares</small></span></button>
+    )}</div></div>);
+
+  if(ph==="done"){const ok=Object.values(res).filter(r=>r==="ok").length;const pct=Math.round(ok/sz*100);
+    return(<div className="mt-s"><div className="g-over"><h2>{pct>=80?"Excelente! 🎉":"Continue! 💪"}</h2>
+      <div className="done-pct" style={{color:"#fbbf24"}}>{sc} pts</div>
+      <div className="done-row"><div><b>{ok}/{sz}</b><small>Corretos</small></div><div><b>{fmtT(time)}</b><small>Tempo</small></div><div><b>{pct}%</b><small>Precisão</small></div></div>
+      <button className="btn-main" onClick={()=>go(sz)}>🔄 Jogar</button><button className="btn-sec" onClick={()=>setPh("menu")}>← Menu</button>
+    </div></div>);}
+
+  return(<div className="mt-p">
+    <div className="mt-hud"><button className="hud-x" onClick={()=>setPh("menu")}>✕</button><span>⏱️ {fmtT(time)}</span><span>{conns.length}/{sz}</span></div>
+    {sel&&<div className="mt-hint">Toque na {sel.side==="left"?"tradução 🇧🇷":"palavra 🇩🇪"}</div>}
+    <div className="mt-area" ref={aRef} onClick={()=>setSel(null)}>
+      <svg className="mt-svg">{lines.map((l,i)=>{const mx=(l.f.x+l.t.x)/2;return(<path key={i} d={"M"+l.f.x+" "+l.f.y+" C"+mx+" "+l.f.y+" "+mx+" "+l.t.y+" "+l.t.x+" "+l.t.y} fill="none" stroke={l.color} strokeWidth={checked?3.5:2.5} strokeLinecap="round" opacity={l.dash?0.5:0.8} strokeDasharray={l.dash?"6 4":"none"}/>);})}</svg>
+      <div className="mt-cols">
+        <div className="mt-col"><div className="mt-ch">🇩🇪 Alemão</div>
+          {left.map(it=>{const gc=G3[it.g];const isSel=sel&&sel.side==="left"&&sel.item.pid===it.pid;const linked=conns.find(c=>c.lid===it.pid);const r=res[it.pid];
+            return(<div key={it.id} ref={el=>lRefs.current[it.pid]=el} className={"mw mw-de"+(isSel?" mw-sel":"")+(linked&&!checked?" mw-lnk":"")+(r==="ok"?" mw-ok":"")+(r==="bad"||r==="miss"?" mw-bad":"")} style={{borderColor:gc.accent}} onClick={e=>{e.stopPropagation();tap("left",it);}}>
+              <span className="mw-badge" style={{background:gc.bg}}>{gc.label}</span><span className="mw-txt">{it.text}</span>{linked&&!checked&&<span className="mw-dot" style={{background:gc.bg}}/>}
+            </div>);})}</div>
+        <div className="mt-col"><div className="mt-ch">🇧🇷 Português</div>
+          {right.map(it=>{const isSel=sel&&sel.side==="right"&&sel.item.pid===it.pid;const linked=conns.find(c=>c.rid===it.pid);const r=res[it.pid]||res["r_"+it.pid];
+            return(<div key={it.id} ref={el=>rRefs.current[it.pid]=el} className={"mw mw-pt"+(isSel?" mw-sel":"")+(linked&&!checked?" mw-lnk":"")+(r==="ok"?" mw-ok":"")+(r==="bad"?" mw-bad":"")} onClick={e=>{e.stopPropagation();tap("right",it);}}>
+              <span className="mw-txt">{it.text}</span>{linked&&!checked&&<span className="mw-dot" style={{background:"#6366f1"}}/>}
+            </div>);})}</div>
+      </div>
+    </div>
+    <div className="mt-bot">{!checked?<button className={"mt-ck"+(conns.length>=sz?" mt-ck-go":"")} onClick={conns.length>=sz?check:undefined} disabled={conns.length<sz}>{conns.length>=sz?"✅ Verificar":"Conecte "+conns.length+"/"+sz}</button>:
+      <div><button className="btn-main" onClick={()=>go(sz)}>🔄 Jogar</button><button className="btn-sec" onClick={()=>setPh("menu")}>← Menu</button></div>}
+    </div>
+  </div>);
+}
+
+/* ═══ MAIN HUB ═══ */
+function App(){
+  const[view,setView]=useState("hub");
+  const[level,setLevel]=useState(null);
+
+  useEffect(()=>{if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}},[]);
+
+  const curCards=level?LEVELS[level].cards:[];
+  const curPairs=curCards.map(c=>[c.front,c.back,c.g]);
+  const goBack=()=>{if(view!=="hub"&&view!=="level")setView("level");else{setView("hub");setLevel(null);}};
+
+  if(view==="flash")return(<div className="app"><style>{CSS}</style><Flashcards cards={curCards} onBack={()=>setView("level")}/></div>);
+  if(view==="duck")return(<div className="app"><style>{CSS}</style><DuckHunt pairs={curPairs} onBack={()=>setView("level")}/></div>);
+  if(view==="mem")return(<div className="app"><style>{CSS}</style><Memory pairs={curPairs} onBack={()=>setView("level")}/></div>);
+  if(view==="match")return(<div className="app"><style>{CSS}</style><Match pairs={curPairs} onBack={()=>setView("level")}/></div>);
+
+  // Level selection (after choosing a level)
+  if(view==="level"&&level)return(<div className="app"><style>{CSS}</style>
+    <div className="hub">
+      <button className="back-btn" onClick={()=>{setView("hub");setLevel(null);}}>← Níveis</button>
+      <div className="hub-hd">
+        <h1 className="hub-title">🧠 Kartei<span className="hub-a">Kraft</span></h1>
+        <p className="hub-sub">{LEVELS[level].name} · {curCards.length} palavras</p>
+      </div>
+      <div className="hub-grid">
+        <button className="hub-card hc-flash" onClick={()=>setView("flash")}>
+          <span className="hc-icon">📚</span><span className="hc-name">Flashcards</span>
+          <span className="hc-desc">Cartões com áudio e reconhecimento de voz</span>
+        </button>
+        <button className="hub-card hc-duck" onClick={()=>setView("duck")}>
+          <span className="hc-icon">🦆</span><span className="hc-name">Entenjagd</span>
+          <span className="hc-desc">Acerte o patinho com a tradução correta</span>
+        </button>
+        <button className="hub-card hc-mem" onClick={()=>setView("mem")}>
+          <span className="hc-icon">🧠</span><span className="hc-name">Memória</span>
+          <span className="hc-desc">Encontre os pares alemão ↔ português</span>
+        </button>
+        <button className="hub-card hc-match" onClick={()=>setView("match")}>
+          <span className="hc-icon">🔗</span><span className="hc-name">Conectar</span>
+          <span className="hc-desc">Ligue cada palavra à sua tradução</span>
+        </button>
+      </div>
+    </div>
+  </div>);
+
+  // Main hub — level selection
+  return(<div className="app"><style>{CSS}</style>
+    <div className="hub">
+      <div className="hub-hd">
+        <h1 className="hub-title">🧠 Kartei<span className="hub-a">Kraft</span></h1>
+        <p className="hub-sub">Escolha seu nível de alemão</p>
+      </div>
+      <div className="lvl-grid">
+        <button className="lvl-card lvl-a2" onClick={()=>{setLevel("A2");setView("level");}}>
+          <span className="lvl-badge">A2</span>
+          <span className="lvl-name">Elementar</span>
+          <span className="lvl-info">{ALL_A2.length} palavras · Substantivos + Verbos</span>
+          <span className="lvl-desc">Vocabulário básico para o dia a dia</span>
+        </button>
+        <button className="lvl-card lvl-b1" onClick={()=>{setLevel("B1");setView("level");}}>
+          <span className="lvl-badge">B1</span>
+          <span className="lvl-name">Intermediário</span>
+          <span className="lvl-info">{ALL_B1.length} palavras · Substantivos + Verbos</span>
+          <span className="lvl-desc">Vocabulário para situações mais complexas</span>
+        </button>
+      </div>
+      <p className="hub-foot">Baseado nas listas oficiais do Goethe-Zertifikat 🇩🇪→🇧🇷</p>
+    </div>
+  </div>);
+}
+
+/* ═══ CSS ═══ */
+const CSS=`
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-family:'DM Sans',sans-serif;background:#0f172a;min-height:100vh;color:#e2e8f0}
+
+/* ── HUB ── */
+.hub{max-width:500px;margin:0 auto;padding:36px 20px}
+.hub-hd{text-align:center;margin-bottom:32px}
+.hub-title{font-family:'Gaegu',cursive;font-size:44px;font-weight:700;margin:0}
+.hub-a{background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hub-sub{font-size:14px;color:#94a3b8;margin-top:4px}
+.hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hub-card{
+  background:#1e293b;border:2px solid #334155;border-radius:16px;padding:20px 16px;
+  cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px;color:#e2e8f0;
+}
+.hub-card:hover{border-color:#6366f1;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.hc-icon{font-size:32px}
+.hc-name{font-family:'Gaegu',cursive;font-size:22px;font-weight:700}
+.hc-desc{font-size:12px;color:#94a3b8;line-height:1.4}
+.hc-tag{font-size:10px;color:#818cf8;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:auto;padding-top:4px}
+.hc-flash{border-color:#6366f133}.hc-flash:hover{border-color:#6366f1}
+.hc-duck{border-color:#f59e0b33}.hc-duck:hover{border-color:#f59e0b}
+.hc-mem{border-color:#22c55e33}.hc-mem:hover{border-color:#22c55e}
+.hc-match{border-color:#a78bfa33}.hc-match:hover{border-color:#a78bfa}
+.hub-foot{text-align:center;font-size:12px;color:#475569;margin-top:28px}
+
+/* ── SHARED ── */
+.back-btn{background:none;border:1px solid #334155;color:#94a3b8;border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;margin-bottom:16px;display:inline-flex;align-items:center;gap:4px;transition:all .2s}
+.back-btn:hover{border-color:#6366f1;color:#e2e8f0}
+.sec-title{font-family:'Gaegu',cursive;font-size:32px;font-weight:700;margin:0 0 4px}
+.sec-sub{font-size:13px;color:#94a3b8;margin-bottom:20px}
+.btn-main{width:100%;padding:12px;background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:16px;cursor:pointer;font-family:'Gaegu',cursive;margin-bottom:8px;transition:all .2s}
+.btn-main:hover{box-shadow:0 4px 20px rgba(99,102,241,.4)}
+.btn-sec{display:block;width:100%;padding:10px;background:transparent;border:2px solid #334155;color:#94a3b8;border-radius:12px;font-size:13px;cursor:pointer;text-align:center;margin-top:8px}
+.btn-sec:hover{border-color:#6366f1;color:#e2e8f0}
+.diff-list{display:flex;flex-direction:column;gap:8px}
+.diff-btn{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;background:#1e293b;border:2px solid #334155;border-radius:12px;cursor:pointer;color:#e2e8f0;text-align:left;transition:all .2s}
+.diff-btn:hover{border-color:#6366f1;transform:translateX(4px)}
+.diff-btn b{display:block;font-size:15px}.diff-btn small{font-size:11px;color:#94a3b8}
+.hud-x{background:none;border:1px solid #475569;color:#94a3b8;border-radius:8px;padding:4px 10px;cursor:pointer;font-size:14px}
+.g-over{text-align:center;max-width:380px;margin:40px auto;padding:20px}
+.g-over h2{font-family:'Gaegu',cursive;font-size:30px;margin-bottom:8px}
+.done-pct{font-family:'Gaegu',cursive;font-size:52px;font-weight:700;color:#22c55e;margin:8px 0 16px}
+.done-row{display:flex;justify-content:center;gap:24px;margin-bottom:20px}
+.done-row div{text-align:center}.done-row b{display:block;font-size:24px;font-family:'Gaegu',cursive}.done-row small{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px}
+.gbar{display:flex;height:5px;border-radius:3px;overflow:hidden;gap:2px;margin-bottom:8px}.gbar>div{border-radius:3px}
+.gleg{display:flex;gap:14px;font-size:11px;color:#94a3b8;margin-bottom:16px}.gleg b{margin-right:3px}
+.fbrow{display:flex;gap:6px;margin-top:4px}.fbtn{flex:1;padding:8px;border:1px solid #334155;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8}
+.pbar{height:3px;background:#1e293b;border-radius:2px;overflow:hidden;margin:0 0 8px}.pfill{height:100%;background:linear-gradient(90deg,#6366f1,#c084fc);transition:width .3s}
+.combo{text-align:center;font-family:'Gaegu',cursive;font-size:20px;font-weight:700;color:#fbbf24;animation:cpop .3s}
+@keyframes cpop{0%{transform:scale(1.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.spoken{text-align:center;padding:6px 12px;border-radius:8px;font-size:12px;margin-bottom:8px}
+.spoken.correct{background:#22c55e15;border:1px solid #22c55e33;color:#86efac}
+.spoken.close{background:#f59e0b15;border:1px solid #f59e0b33;color:#fcd34d}
+.spoken.incorrect{background:#ef444415;border:1px solid #ef444433;color:#fca5a5}
+.gfb{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:12px 28px;border-radius:14px;font-family:'Gaegu',cursive;font-size:20px;font-weight:700;z-index:50;pointer-events:none;animation:fbp .3s;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.gfb-ok{background:#dcfce7;color:#166534;border:3px solid #22c55e}
+.gfb-bad{background:#fee2e2;color:#991b1b;border:3px solid #ef4444}
+@keyframes fbp{0%{transform:translate(-50%,-50%) scale(.7);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+
+/* ── FLASHCARDS ── */
+.fc-setup,.fc-done{max-width:440px;margin:0 auto;padding:28px 20px}
+.fc-play{max-width:440px;margin:0 auto;padding:16px;min-height:100vh;display:flex;flex-direction:column}
+.fc-hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:14px;font-weight:600}
+.card-wrap{perspective:1200px;width:100%;height:340px;cursor:pointer;margin:auto 0;flex-shrink:0}
+.card-inner{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card-inner.card-flip{transform:rotateY(180deg)}
+.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.25)}
+.card-f{}.card-b{transform:rotateY(180deg)}
+.card-badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.2);padding:3px 12px;border-radius:14px;font-family:'Gaegu',cursive;font-size:14px;font-weight:700}
+.card-btag{position:absolute;top:16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:3px;opacity:.35}
+.card-word{font-family:'Gaegu',cursive;font-size:30px;font-weight:700;text-align:center}
+.card-orig{position:absolute;bottom:16px;font-family:'Gaegu',cursive;font-size:15px;display:flex;align-items:center;gap:6px}
+.card-audio{display:flex;align-items:center;gap:8px;margin-top:10px;z-index:2}
+.abtn{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
+.abtn:hover{background:rgba(255,255,255,.2);transform:scale(1.1)}
+.abtn-on{border-color:#ef4444;background:rgba(239,68,68,.2);animation:mic 1.5s ease-in-out infinite}
+@keyframes mic{0%,100%{box-shadow:0 0 6px #ef444433}50%{box-shadow:0 0 18px #ef444466}}
+.abtn-sm{background:none;border:none;cursor:pointer;font-size:14px;padding:0}
+.abadge{font-size:12px;font-weight:700;padding:3px 8px;border-radius:12px;font-family:'Gaegu',cursive}
+.a-correct{background:#dcfce7;color:#166534}.a-close{background:#fef9c3;color:#854d0e}.a-incorrect{background:#fee2e2;color:#991b1b}
+.fc-ctrls{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 0 24px}
+.cbtn{width:40px;height:40px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#94a3b8;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s}
+.cbtn:hover:not(:disabled){border-color:#6366f1;color:#e2e8f0}.cbtn:disabled{opacity:.3}
+.cbtn-f{border-color:#475569}
+.mbtn{display:flex;align-items:center;gap:4px;padding:9px 16px;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer}
+.mbtn-k{background:#22c55e20;color:#22c55e;border:1px solid #22c55e33}
+.mbtn-u{background:#ef444420;color:#ef4444;border:1px solid #ef444433}
+
+/* ── DUCK HUNT ── */
+.dh{min-height:100vh;background:linear-gradient(180deg,#7dd3fc,#38bdf8 40%,#0ea5e9);overflow:hidden;position:relative;user-select:none;padding:0}
+.dh .back-btn{position:absolute;top:10px;left:10px;z-index:10;background:rgba(255,255,255,.7);border-color:#94a3b8;color:#1e293b}
+.dh-menu{max-width:400px;margin:0 auto;padding:40px 20px;text-align:center}
+.dh-menu .sec-title,.dh-menu .sec-sub,.dh .g-over h2,.dh .g-over b,.dh .back-btn{color:#1e293b}
+.dh-menu .sec-sub,.dh .g-over small{color:#475569}
+.dh-drow{display:flex;justify-content:center;gap:4px;margin-bottom:8px;animation:bob 2.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.dh-rules{background:rgba(255,255,255,.85);border-radius:14px;padding:14px 18px;text-align:left;margin-bottom:16px;border:3px solid #fbbf24}
+.dh-rules p{margin:6px 0;font-size:13px;color:#1e293b}
+.dh-best{font-family:'Gaegu',cursive;font-size:18px;color:#92400e;font-weight:700;margin-bottom:8px}
+.dh .btn-main{background:linear-gradient(135deg,#f59e0b,#d97706);border:3px solid #b45309}
+.dh-hud{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:rgba(15,23,42,.5);backdrop-filter:blur(4px)}
+.dh-lives{font-size:18px;display:flex;gap:1px}.dh-lives .dead{opacity:.2;filter:grayscale(1)}
+.dh-sc{font-family:'Gaegu',cursive;font-size:22px;font-weight:700;color:#fbbf24}
+.dh-rn{font-size:11px;color:rgba(255,255,255,.7);font-family:monospace}
+.dh-bar{text-align:center;padding:8px;margin:4px 10px;background:rgba(255,255,255,.9);border-radius:12px;border:3px solid #f59e0b}
+.dh-bar small{display:block;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:2px}
+.dh-bar b{font-family:'Gaegu',cursive;font-size:30px;color:#1e293b}
+.dh-arena{position:relative}
+.wave{height:20px;background:linear-gradient(180deg,rgba(59,130,246,.2),rgba(59,130,246,.35));border-radius:50% 50% 0 0/10px 10px 0 0}
+.wave-d{background:linear-gradient(180deg,rgba(37,99,235,.25),rgba(37,99,235,.4))}
+.dh-lane{position:relative;height:110px;overflow:hidden;background:linear-gradient(180deg,rgba(34,197,94,.04),rgba(34,197,94,.1))}
+.dk{position:absolute;display:flex;flex-direction:column;align-items:center;z-index:3;cursor:crosshair}
+.dk:hover .dk-txt{background:#fef9c3;border-color:#f59e0b;transform:scale(1.05)}
+.dk-txt{background:rgba(255,255,255,.94);border:2.5px solid #d1d5db;border-radius:10px;padding:4px 12px;font-family:'Gaegu',cursive;font-size:16px;font-weight:700;color:#1e293b;margin-top:-4px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:all .15s;pointer-events:none}
+.dk-hit{animation:dkH .5s ease-out forwards}
+@keyframes dkH{0%{transform:translateY(-50%) scale(1)}20%{transform:translateY(-50%) scale(1.15) rotate(5deg)}100%{transform:translateY(30px) rotate(80deg) scale(.3);opacity:0}}
+.dk-miss{animation:dkM .4s ease-out forwards}
+@keyframes dkM{0%{transform:translateY(-50%)}25%{transform:translateY(-50%) translateX(-8px)}50%{transform:translateY(-50%) translateX(8px)}100%{transform:translateY(-50%);opacity:0}}
+
+/* ── MEMORY ── */
+.mem-s{max-width:440px;margin:0 auto;padding:28px 20px}
+.mem-p{max-width:500px;margin:0 auto}
+.mem-hud{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#1e293b;border-bottom:1px solid #334155;font-size:13px;font-weight:600}
+.mem-grid{display:grid;gap:7px;padding:8px 10px}
+.mc{aspect-ratio:3/4;cursor:pointer;perspective:800px}
+.mc-ok{pointer-events:none}
+.mc-in{position:relative;width:100%;height:100%;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.mc-in.mc-fl{transform:rotateY(180deg)}
+.mc-f{position:absolute;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:11px;border:2.5px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;overflow:hidden}
+.mc-fr{transform:rotateY(180deg);box-shadow:0 3px 12px rgba(0,0,0,.2)}
+.mc-ok .mc-fr{box-shadow:0 0 16px rgba(74,222,128,.3);border-color:#22c55e!important}
+.mc-bk{background:#1e293b;border-color:#334155;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.mc-bk:hover{border-color:#6366f1}
+.mc-g{padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;font-family:'Gaegu',cursive;position:absolute;top:3px;left:3px;color:#fff}
+.mc-t{font-family:'Gaegu',cursive;font-size:14px;font-weight:700;text-align:center;line-height:1.2;word-break:break-word}
+.mc-flag{position:absolute;bottom:3px;font-size:10px}
+.mc-q{font-family:'Gaegu',cursive;font-size:28px;color:#475569;font-weight:700}
+
+/* ── MATCH ── */
+.mt-s{max-width:440px;margin:0 auto;padding:28px 20px}
+.mt-p{min-height:100vh;display:flex;flex-direction:column}
+.mt-hud{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#1e293b;border-bottom:1px solid #334155;font-size:13px;font-weight:600}
+.mt-hint{text-align:center;padding:6px;font-size:12px;color:#a78bfa;background:#6366f115}
+.mt-area{position:relative;flex:1;padding:14px 10px;min-height:350px}
+.mt-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.mt-cols{display:flex;justify-content:space-between;gap:16px;position:relative;z-index:3}
+.mt-col{flex:1;display:flex;flex-direction:column;gap:7px}
+.mt-ch{text-align:center;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.mw{position:relative;padding:11px 12px;border-radius:11px;border:2.5px solid;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;user-select:none;-webkit-user-select:none}
+.mw:active{transform:scale(.97)}
+.mw-de,.mw-pt{background:#fefdf8;color:#1e293b}
+.mw:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.mw-sel{box-shadow:0 0 0 3px #a78bfa44,0 4px 14px rgba(0,0,0,.2);transform:scale(1.02)}
+.mw-lnk{opacity:.7}
+.mw-ok{border-color:#22c55e!important;background:#dcfce7!important}
+.mw-bad{border-color:#ef4444!important;background:#fee2e2!important}
+.mw-badge{padding:2px 7px;border-radius:7px;font-size:10px;font-weight:700;color:#fff;font-family:'Gaegu',cursive;flex-shrink:0}
+.mw-txt{font-family:'Gaegu',cursive;font-size:15px;font-weight:700;flex:1}
+.mw-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:dp 1.5s ease-in-out infinite}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.3}}
+.mt-bot{padding:10px 14px;position:sticky;bottom:0;background:linear-gradient(transparent,#0f172a 30%)}
+.mt-ck{width:100%;padding:12px;border:2px solid #334155;background:#1e293b;color:#64748b;border-radius:12px;font-size:14px;font-weight:600;cursor:not-allowed;font-family:'Gaegu',cursive;transition:all .2s}
+.mt-ck-go{background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;border-color:transparent;cursor:pointer}
+
+
+/* ── LEVELS ── */
+.lvl-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.lvl-card{display:flex;flex-direction:column;gap:6px;padding:24px 20px;background:#1e293b;border:2px solid #334155;border-radius:16px;cursor:pointer;transition:all .2s;text-align:left;color:#e2e8f0}
+.lvl-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.lvl-a2{border-left:4px solid #22c55e}.lvl-a2:hover{border-color:#22c55e}
+.lvl-b1{border-left:4px solid #6366f1}.lvl-b1:hover{border-color:#6366f1}
+.lvl-badge{font-family:'Gaegu',cursive;font-size:32px;font-weight:700}
+.lvl-a2 .lvl-badge{color:#22c55e}.lvl-b1 .lvl-badge{color:#6366f1}
+.lvl-name{font-size:18px;font-weight:600}
+.lvl-info{font-size:12px;color:#94a3b8}
+.lvl-desc{font-size:13px;color:#64748b;margin-top:2px}
+
+@media(max-width:480px){.hub-grid{grid-template-columns:1fr}.hub-title{font-size:36px}.card-word{font-size:24px}.card-wrap{height:300px}.mc-t{font-size:12px}.mw-txt{font-size:13px}.dk-txt{font-size:14px}.mbtn span{display:none}}
+`;
+
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
